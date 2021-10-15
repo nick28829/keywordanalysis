@@ -1,0 +1,3 @@
+python-twitter
+pandas
+beautifulsoup4
