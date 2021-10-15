@@ -2,7 +2,7 @@ import twitter
 import pandas as pd
 import os
 
-TWEET_DIRECTORY = 'tweets'
+TWEET_DIRECTORY = '/home/conda/Projekte/Daten/MdB_Tweets'
 
 def createDirectory(dirName):
     # safe method to create directories and proceed if they already exist
