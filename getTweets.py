@@ -14,7 +14,7 @@ def createDirectory(dirName):
 
 
 if __name__=='__main__':
-    load_dotenv('~/.env')
+    load_dotenv('/root/.env')
     api = twitter.Api(
         consumer_key=os.getenv('twitter_api_key'),
         consumer_secret=os.getenv('twitter_api_secret_key'),
@@ -53,7 +53,11 @@ if __name__=='__main__':
             latest_tweet = None
 
         # get Tweets
-        tweets = api.GetUserTimeline(user_id=mdb['Twitter_Id'], since_id=latest_tweet)
+        try:
+            tweets = api.GetUserTimeline(user_id=mdb['Twitter_Id'], since_id=latest_tweet)
+        except twitter.error.TwitterError:
+            pass
+
 
         # save tweets
         for tweet in tweets:
