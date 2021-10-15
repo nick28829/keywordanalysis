@@ -1,6 +1,7 @@
 import twitter
 import pandas as pd
 import os
+from dotenv import load_dotenv
 
 TWEET_DIRECTORY = 'tweets'
 
@@ -13,6 +14,7 @@ def createDirectory(dirName):
 
 
 if __name__=='__main__':
+    load_dotenv('~/.env')
     api = twitter.Api(
         consumer_key=os.getenv('twitter_api_key'),
         consumer_secret=os.getenv('twitter_api_secret_key'),
