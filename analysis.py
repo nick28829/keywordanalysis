@@ -31,7 +31,8 @@ def initializeTwitter(env: str='/root/.env') -> twitter.Api:
         consumer_key=os.getenv('twitter_api_key'),
         consumer_secret=os.getenv('twitter_api_secret_key'),
         access_token_key=os.getenv('twitter_access_token'),
-        access_token_secret=os.getenv('twitter_access_secret_token')
+        access_token_secret=os.getenv('twitter_access_secret_token'),
+        sleep_on_rate_limit=True
     )
     return api
 
