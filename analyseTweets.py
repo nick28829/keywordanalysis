@@ -32,7 +32,7 @@ def containsKeyword(tweet: str, keyword: str, sim_single: float=0.7, sim_double:
     if not kw_vector.has_vector:
         raise KeyError('Keyword %s could not be vectorized', keyword)
 
-    similarities = [keyword.similarity(w) for w in tokens]
+    similarities = [kw_vector.similarity(w) for w in tokens]
 
     if max(similarities) >= 0.7:
         return True
