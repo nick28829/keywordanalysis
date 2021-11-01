@@ -131,7 +131,7 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
         information['keywords'][kw] = contains
         keyword_dict[kw][party].append(information['date'])
 
-    total['party'].append(information['date'])
+    total[party].append(information['date'])
 
 
 def saveTweet(tweet_info: dict, directory: str):
