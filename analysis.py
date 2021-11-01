@@ -171,7 +171,7 @@ def saveResults(keywordDict, totals):
 if __name__=='__main__':
     api = initializeTwitter
     mdbs = loadMdBs(MDBS_FILE)
-    createPartyDirectories(TWEET_DIRECTORY)
+    createPartyDirectories(TWEET_DIRECTORY, mdbs)
     keywordDict, totals = createkeywordDict()
     totals = {}
     for idx, mdb in mdbs.iterrows():
