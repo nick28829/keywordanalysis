@@ -1,5 +1,5 @@
 from typing import Tuple
-import twitter
+import tweepy
 import pandas as pd
 import os
 import json
@@ -22,18 +22,15 @@ def createDirectory(dirName):
         pass
 
 
-def initializeTwitter(env: str='/root/.env') -> twitter.Api:
+def initializeTwitter(env: str='/root/.env') -> tweepy.API:
     """
     Initialize the connection to the twitter API.
     """
     load_dotenv(env)
-    api = twitter.Api(
-        consumer_key=os.getenv('twitter_api_key'),
-        consumer_secret=os.getenv('twitter_api_secret_key'),
-        access_token_key=os.getenv('twitter_access_token'),
-        access_token_secret=os.getenv('twitter_access_secret_token'),
-        sleep_on_rate_limit=True
-    )
+    auth = tweepy.OAuthHandler(os.getenv('twitter_api_key'), os.getenv('twitter_api_secret_key'))
+    auth.set_access_token(os.getenv('twitter_access_token'), os.getenv('twitter_access_secret_token'))
+
+    api = tweepy.API(auth)
     return api
 
 
@@ -74,7 +71,7 @@ def createMdBDirectory(path: str,  mdb: pd.Series) -> str:
     return current_dir
 
 
-def getTweets(current_dir: str, mdb: pd.Series) -> list:
+def getTweets(api: tweepy.API, current_dir: str, mdb: pd.Series) -> list:
     """
     Get the latest tweets from a MdB based on the dictionary 
     they are stored in.
@@ -88,8 +85,8 @@ def getTweets(current_dir: str, mdb: pd.Series) -> list:
 
     # get Tweets
     try:
-        tweets = api.GetUserTimeline(user_id=mdb['Twitter_Id'], since_id=latest_tweet)
-    except twitter.error.TwitterError:
+        tweets = api.user_timeline(user_id=mdb['Twitter_Id'], since_id=latest_tweet, include_rts=False, tweet_mode='extended', count=30)
+    except tweepy.errors.Forbidden:
         tweets = []
 
     return tweets
@@ -101,7 +98,7 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
     """
     information = {
         'id': tweet.id,
-        'text': tweet.text,
+        'text': tweet.full_text,
         'date':'',
         'keywords': {
             # 'kw': True
@@ -128,7 +125,7 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
         information['date'] = d[-1] + '-' + months[d[1]] + '-' + d[2]
     except KeyError:
         logging.error('No month found for ' + d[1])
-        
+
     for kw in keyword_dict.keys:
         contains = containsKeyword(tweet.text)
         information['keywords'][kw] = contains
@@ -180,7 +177,7 @@ if __name__=='__main__':
     for idx, mdb in mdbs.iterrows():
         # create subdir for this mdb
         current_dir = createMdBDirectory(TWEET_DIRECTORY, mdb)
-        tweets = getTweets(current_dir, mdb)
+        tweets = getTweets(api, current_dir, mdb)
 
         # prepare counting of total tweets
         party = mdb['Party']
