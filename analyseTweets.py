@@ -8,7 +8,7 @@ mention = re.compile(r"@\w*")
 link = re.compile(r"https?://[\w\.-/]*")
 
 
-def containsKeyword(tweet: str, keyword: str, sim_single: float, sim_double: float) -> bool:
+def containsKeyword(tweet: str, keyword: str, sim_single: float=0.7, sim_double: float=0.55) -> bool:
     """
     Process Tweet and tell wheter or not it contains a certain 
     keyword based an similarity of the word vectors. If it contains
