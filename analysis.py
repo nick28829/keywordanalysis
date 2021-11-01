@@ -99,32 +99,32 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
     information = {
         'id': tweet.id,
         'text': tweet.full_text,
-        'date':'',
+        'date': tweet.created_at.isoformat(),
         'keywords': {
             # 'kw': True
         }
     }
 
     # create an ISO8601 string for the creation date
-    months = {
-        'Jan': '01',
-        'Feb': '02',
-        'Mar': '03',
-        'Apr': '04',
-        'May': '05',
-        'Jun': '06',
-        'Jul': '07',
-        'Aug': '08',
-        'Sep': '09',
-        'Oct': '10',
-        'Nov': '11',
-        'Dec': '12'
-        }
-    d = tweet.created_at.split(' ')
-    try:
-        information['date'] = d[-1] + '-' + months[d[1]] + '-' + d[2]
-    except KeyError:
-        logging.error('No month found for ' + d[1])
+    # months = {
+    #     'Jan': '01',
+    #     'Feb': '02',
+    #     'Mar': '03',
+    #     'Apr': '04',
+    #     'May': '05',
+    #     'Jun': '06',
+    #     'Jul': '07',
+    #     'Aug': '08',
+    #     'Sep': '09',
+    #     'Oct': '10',
+    #     'Nov': '11',
+    #     'Dec': '12'
+    #     }
+    # d = tweet.created_at.split(' ')
+    # try:
+    #     information['date'] = d[-1] + '-' + months[d[1]] + '-' + d[2]
+    # except KeyError:
+    #     logging.error('No month found for ' + d[1])
 
     for kw in keyword_dict.keys:
         contains = containsKeyword(tweet.text)
