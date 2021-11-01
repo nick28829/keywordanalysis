@@ -12,7 +12,7 @@ Table with single keyword analysis for one party on a specific date.
 
 class DataBase:
     def __init__(self):
-        self.con = sqlite3.connect(':memory:')
+        self.con = sqlite3.connect('kwa.db')
 
     def createDB(self, parties: list, keywords: list):
         self.con.execute("""
@@ -54,30 +54,63 @@ class DataBase:
                     except KeyError:
                         logging.error('Did not find total for date ' + date)
                         total = 0
-                    self.execute(
+                    qs = self.execute(
                         """
-                        INSERT INTO analysis (
-                            date, 
-                            mentions, 
-                            total, 
-                            party, 
-                            keyword)
-                        VALUES (
-                            (?),
-                            (?),
-                            (?),
-                            (SELECT id FROM party WHERE party = (?)),
-                            (SELECT id FROM keyword WHERE keyword = (?))
-                        );
+                        SELECT mentions, total 
+                        FROM analysis 
+                        WHERE 
+                            date = (?), 
+                            party = (SELECT id FROM party WHERE party = (?));
                         """,
                         [
                             date,
-                            mentions,
-                            total,
-                            party,
-                            keyword
+                            party
                         ]
                     )
+                    # if no entry for this day exists yet
+                    if len(qs) == 0:
+                        self.con.execute(
+                            """
+                            INSERT INTO analysis (
+                                date, 
+                                mentions, 
+                                total, 
+                                party, 
+                                keyword)
+                            VALUES (
+                                (?),
+                                (?),
+                                (?),
+                                (SELECT id FROM party WHERE party = (?)),
+                                (SELECT id FROM keyword WHERE keyword = (?))
+                            );
+                            """,
+                            [
+                                date,
+                                mentions,
+                                total,
+                                party,
+                                keyword
+                            ]
+                        )
+                    # if there is already an entry for this day
+                    else:
+                        q_id, q_mentions, q_total = qs[0]
+                        mentions += q_mentions
+                        total += q_total
+                        self.con.execute(
+                            """
+                            UPDATE analysis
+                            SET mentions = (?), total = (?)
+                            WHERE id = (?)
+                            """,
+                            [
+                                mentions,
+                                total,
+                                q_id
+                            ]
+                        )
+        self.con.commit()
 
     def getKeywords(self) -> list:
         return self.con.execute(
