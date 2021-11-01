@@ -184,9 +184,8 @@ if __name__=='__main__':
 
         # save tweets
         for tweet in tweets:
-            details = analyseTweet(tweet, keywordDict, party)
+            details = analyseTweet(tweet, keywordDict, totals, party)
             saveTweet(details, current_dir)
-            totals[party] += 0
         break
 
     # save the results
