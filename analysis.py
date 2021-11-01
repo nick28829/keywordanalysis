@@ -6,8 +6,8 @@ import json
 import logging
 from dotenv import load_dotenv
 
-from .analyseTweets import containsKeyword
-from .db import DataBase
+from analyseTweets import containsKeyword
+from db import DataBase
 
 TWEET_DIRECTORY = '/home/conda/Projekte/Daten/MdB_Tweets'
 MDBS_FILE = 'MdBs_twitter.csv'
