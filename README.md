@@ -29,6 +29,13 @@ To save:
 Vectorize the words with https://devmount.github.io/GermanWordEmbeddings/
 - word2vec auf Tweets/Parteiprogrammen trainieren
 
+### Pipeline
+- 0. Normalization
+- 1. Remove Stopwords
+- 2. Lemmatization
+- 3. Convert words to vectors
+- 4. Compare vector of keyword with vectors of other words
+
 ## Building the API
 
 ## Building the GUI
