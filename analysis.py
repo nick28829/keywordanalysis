@@ -172,7 +172,7 @@ if __name__=='__main__':
     api = initializeTwitter
     mdbs = loadMdBs(MDBS_FILE)
     createPartyDirectories(TWEET_DIRECTORY, mdbs)
-    keywordDict, totals = createkeywordDict()
+    keywordDict, totals = createkeywordDict(mdbs['Party'].unique(), 'keywords.txt')
     totals = {}
     for idx, mdb in mdbs.iterrows():
         # create subdir for this mdb
