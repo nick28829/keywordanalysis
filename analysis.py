@@ -172,7 +172,7 @@ if __name__=='__main__':
     api = initializeTwitter
     mdbs = loadMdBs(MDBS_FILE)
     createPartyDirectories(TWEET_DIRECTORY)
-    keywordDict = createkeywordDict()
+    keywordDict, totals = createkeywordDict()
     totals = {}
     for idx, mdb in mdbs.iterrows():
         # create subdir for this mdb
@@ -181,14 +181,13 @@ if __name__=='__main__':
 
         # prepare counting of total tweets
         party = mdb['Party']
-        if not party in totals:
-            totals[party] = 0
 
         # save tweets
         for tweet in tweets:
             details = analyseTweet(tweet, keywordDict, party)
             saveTweet(details, current_dir)
             totals[party] += 0
+        break
 
-        # save the results
-        saveResults(keywordDict, totals)
+    # save the results
+    saveResults(keywordDict, totals)
