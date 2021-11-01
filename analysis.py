@@ -127,7 +127,7 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
     #     logging.error('No month found for ' + d[1])
 
     for kw in keyword_dict.keys():
-        contains = containsKeyword(tweet.text)
+        contains = containsKeyword(information['text'])
         information['keywords'][kw] = contains
         keyword_dict[kw][party].append(information['date'])
 
