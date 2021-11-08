@@ -78,7 +78,8 @@ class DataBase:
                         SELECT mentions, total 
                         FROM analysis 
                         WHERE 
-                            date = (?), 
+                            date = (?) 
+                        AND  
                             party = (SELECT id FROM party WHERE name = (?));
                         """,
                         [
@@ -121,7 +122,7 @@ class DataBase:
                             """
                             UPDATE analysis
                             SET mentions = (?), total = (?)
-                            WHERE id = (?)
+                            WHERE id = (?);
                             """,
                             [
                                 mentions,
