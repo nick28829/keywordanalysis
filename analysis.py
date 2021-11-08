@@ -188,6 +188,8 @@ if __name__=='__main__':
         for tweet in tweets:
             details = analyseTweet(tweet, keywordDict, totals, party)
             saveTweet(details, current_dir)
+        
+        logging.info('Finished tweets of ' + mdb['Name'])
 
     # save the results
     saveResults(keywordDict, totals)
