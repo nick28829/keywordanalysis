@@ -166,6 +166,7 @@ def saveResults(keywordDict, totals):
     Open a connection to the database and save the results in there.
     """
     db = DataBase()
+    db.createDB(keywordDict.keys(), totals.keys())
     db.saveTweets(keywordDict, totals)
     db.close()
 
