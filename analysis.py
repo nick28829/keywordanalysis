@@ -99,7 +99,7 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
     information = {
         'id': tweet.id,
         'text': tweet.full_text,
-        'date': tweet.created_at.isoformat(),
+        'date': tweet.created_at.date().isoformat(),
         'keywords': {
             # 'kw': True
         }
