@@ -34,7 +34,7 @@ def containsKeyword(tweet: str, keyword: str, sim_single: float=0.7, sim_double:
 
     similarities = [kw_vector.similarity(w) for w in tokens]
 
-    if max(similarities) >= 0.7:
+    if max(similarities) >= sim_single:
         return True
 
     # count elements
