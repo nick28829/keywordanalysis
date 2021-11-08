@@ -1,3 +1,4 @@
+import logging
 from demoji import replace_with_desc
 import re
 import spacy
@@ -34,13 +35,19 @@ def containsKeyword(tweet: str, keyword: str, sim_single: float=0.7, sim_double:
 
     similarities = [kw_vector.similarity(w) for w in tokens]
 
-    if max(similarities) >= sim_single:
-        return True
+    if not similarities:
+        return False
 
-    # count elements
-    # bigger_double_sim = sum(s > sim_double for s in similarities)
-    if sum(s > sim_double for s in similarities) > 2:
-        return True
+    try:
+        if max(similarities) >= sim_single:
+            return True
 
-    # Otherwise
-    return False
+        # count elements
+        # bigger_double_sim = sum(s > sim_double for s in similarities)
+        if sum(s > sim_double for s in similarities) > 2:
+            return True
+    except Exception as e:
+        logging.error(e)
+    finally:
+        # Otherwise
+        return False
