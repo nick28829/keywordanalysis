@@ -129,7 +129,7 @@ class DataBase:
 
         qs = self.con.execute(
             """
-            SELECT date, mentions, total 
+            SELECT date, mentions, total, party
             FROM ((analysis 
             JOIN keyword 
             ON analysis.keyword = keyword.id)
