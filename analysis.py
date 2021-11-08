@@ -140,7 +140,7 @@ def saveTweet(tweet_info: dict, directory: str):
     """
     Save a tweet to a document.
     """
-    with open(os.path.join(directory, tweet_info['id']), 'w') as f:
+    with open(os.path.join(directory, str(tweet_info['id'])), 'w') as f:
         f.write(json.dumps(tweet_info))
 
 
