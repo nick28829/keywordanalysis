@@ -115,7 +115,7 @@ class DataBase:
                         )
                     # if there is already an entry for this day
                     else:
-                        q_id, q_mentions, q_total = qs[0]
+                        q_id, q_mentions, q_total = qs.fetchone()
                         mentions += q_mentions
                         total += q_total
                         self.con.execute(
