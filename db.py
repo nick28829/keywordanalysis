@@ -44,8 +44,8 @@ class DataBase:
         self.con.commit()
 
     def saveTweets(self, keywordDict: dict, totals: dict):
-        for keyword in keywordDict.keys:
-            for party in keywordDict[keyword].keys:
+        for keyword in keywordDict.keys():
+            for party in keywordDict[keyword].keys():
                 dates = keywordDict[keyword][party]
                 for date in set(dates):
                     mentions = dates.count(date)
