@@ -86,8 +86,10 @@ def getTweets(api: tweepy.API, current_dir: str, mdb: pd.Series) -> list:
     # get Tweets
     try:
         tweets = api.user_timeline(user_id=mdb['Twitter_Id'], since_id=latest_tweet, include_rts=False, tweet_mode='extended', count=30)
-    except tweepy.errors.Forbidden:
+    except (tweepy.errors.Forbidden, tweepy.errors.Unauthorized):
         tweets = []
+    except Exception as e:
+        logging.error(e)
 
     return tweets
 
@@ -176,20 +178,21 @@ if __name__=='__main__':
     mdbs = loadMdBs(MDBS_FILE)
     createPartyDirectories(TWEET_DIRECTORY, mdbs)
     keywordDict, totals = createkeywordDict(mdbs['Party'].unique(), 'keywords.txt')
-    for idx, mdb in mdbs.iterrows():
-        # create subdir for this mdb
-        current_dir = createMdBDirectory(TWEET_DIRECTORY, mdb)
-        tweets = getTweets(api, current_dir, mdb)
+    try:
+        for idx, mdb in mdbs.iterrows():
+            # create subdir for this mdb
+            current_dir = createMdBDirectory(TWEET_DIRECTORY, mdb)
+            tweets = getTweets(api, current_dir, mdb)
 
-        # prepare counting of total tweets
-        party = mdb['Party']
+            # prepare counting of total tweets
+            party = mdb['Party']
 
-        # save tweets
-        for tweet in tweets:
-            details = analyseTweet(tweet, keywordDict, totals, party)
-            saveTweet(details, current_dir)
-        
-        logging.info('Finished tweets of ' + mdb['Name'])
-
-    # save the results
-    saveResults(keywordDict, totals)
+            # save tweets
+            for tweet in tweets:
+                details = analyseTweet(tweet, keywordDict, totals, party)
+                saveTweet(details, current_dir)
+            
+            logging.info('Finished tweets of ' + mdb['Name'])
+    finally:
+        # save the results
+        saveResults(keywordDict, totals)
