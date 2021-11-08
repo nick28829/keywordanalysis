@@ -20,10 +20,14 @@ class DataBase:
             id INTEGER PRIMARY KEY, 
             keyword CHARACTER(128)
         );
+        """)
+        self.con.execute("""
         CREATE TABLE party (
             id INTEGER PRIMARY KEY, 
             name CHARACTER(128), 
         );
+        """)
+        self.con.execute("""
         CREATE TABLE analysis (
             id INTEGER PRIMARY KEY, 
             date DATE, 
