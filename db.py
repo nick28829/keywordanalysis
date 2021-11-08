@@ -73,7 +73,7 @@ class DataBase:
                     except KeyError:
                         logging.error('Did not find total for date ' + date)
                         total = 0
-                    qs = self.execute(
+                    qs = self.con.execute(
                         """
                         SELECT mentions, total 
                         FROM analysis 
