@@ -69,7 +69,7 @@ class DataBase:
                 for date in set(dates):
                     mentions = dates.count(date)
                     try:
-                        total = totals[party][keyword].count(date)
+                        total = totals[party].count(date)
                     except KeyError:
                         logging.error('Did not find total for date ' + date)
                         total = 0
