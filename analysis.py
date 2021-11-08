@@ -133,6 +133,8 @@ def analyseTweet(tweet, keyword_dict, total, party) -> dict:
 
     total[party].append(information['date'])
 
+    return information
+
 
 def saveTweet(tweet_info: dict, directory: str):
     """
