@@ -66,7 +66,7 @@ def createMdBDirectory(path: str,  mdb: pd.Series) -> str:
     """
     If not existing, create a directory for a MdB to store tweets in.
     """
-    current_dir = os.path.join(TWEET_DIRECTORY, mdb['Party'], mdb['Name'] + '_' + mdb['First_Name'])
+    current_dir = os.path.join(TWEET_DIRECTORY, mdb['Party'], mdb['Name'].strip() + '_' + mdb['First_Name'].strip())
     createDirectory(current_dir)
     return current_dir
 
@@ -188,7 +188,6 @@ if __name__=='__main__':
         for tweet in tweets:
             details = analyseTweet(tweet, keywordDict, totals, party)
             saveTweet(details, current_dir)
-        break
 
     # save the results
     saveResults(keywordDict, totals)
