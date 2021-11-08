@@ -16,36 +16,51 @@ class DataBase:
 
     def createDB(self, parties: list, keywords: list):
         self.con.execute("""
-        CREATE TABLE keyword (
+        CREATE TABLE IF NOT EXISTS keyword (
             id INTEGER PRIMARY KEY, 
-            keyword CHARACTER(128)
+            keyword CHARACTER(128) UNIQUE
         );
         """)
         self.con.execute("""
-        CREATE TABLE party (
+        CREATE TABLE IF NOT EXISTS party (
             id INTEGER PRIMARY KEY, 
-            name CHARACTER(128), 
+            name CHARACTER(128) UNIQUE
         );
         """)
         self.con.execute("""
-        CREATE TABLE analysis (
+        CREATE TABLE IF NOT EXISTS analysis (
             id INTEGER PRIMARY KEY, 
             date DATE, 
             mentions INTEGER, 
             total INTEGER,
+            party INTEGER,
+            keyword INTEGER,
             FOREIGN KEY (party) REFERENCES party(id),
             FOREIGN KEY (keyword) REFERENCES keyword(id)
         );
         """)
-        self.con.executemany("""
-            INSERT INTO party (name) VALUES 
-                (?);
-            """, parties)
-        self.con.executemany("""
-            INSERT INTO keyword (keyword) VALUES
-                (?);
-            """, keywords)
-        self.con.commit()
+
+        for party in parties:
+            qs = self.con.execute("""
+                    SELECT (name) FROM party WHERE name = (?);
+                """, (party,))
+            if qs.rowcount == 0:
+                self.con.execute("""
+                    INSERT INTO party (name) VALUES 
+                        (?);
+                    """, (party,))
+
+        for keyword in keywords:
+            qs = self.con.execute("""
+                    SELECT (keyword) FROM keyword WHERE keyword = (?);
+                """, (party,))
+            if qs.rowcount == 0:
+                self.con.execute("""
+                    INSERT INTO keyword (keyword) VALUES
+                        (?);
+                    """, (keyword,))
+
+        self.con.commit()  
 
     def saveTweets(self, keywordDict: dict, totals: dict):
         for keyword in keywordDict.keys():
@@ -64,7 +79,7 @@ class DataBase:
                         FROM analysis 
                         WHERE 
                             date = (?), 
-                            party = (SELECT id FROM party WHERE party = (?));
+                            party = (SELECT id FROM party WHERE name = (?));
                         """,
                         [
                             date,
@@ -72,7 +87,7 @@ class DataBase:
                         ]
                     )
                     # if no entry for this day exists yet
-                    if len(qs) == 0:
+                    if qs.rowcount == 0:
                         self.con.execute(
                             """
                             INSERT INTO analysis (
@@ -85,7 +100,7 @@ class DataBase:
                                 (?),
                                 (?),
                                 (?),
-                                (SELECT id FROM party WHERE party = (?)),
+                                (SELECT id FROM party WHERE name = (?)),
                                 (SELECT id FROM keyword WHERE keyword = (?))
                             );
                             """,
@@ -117,11 +132,13 @@ class DataBase:
         self.con.commit()
 
     def getKeywords(self) -> list:
-        return self.con.execute(
+        qs = self.con.execute(
             """
             SELECT keyword FROM keyword;
             """
         )
+        return [keyword for (keyword, ) in qs]
+
 
     def getKeywordDetails(self, keyword: str) -> list:
         keywords = self.getKeywords()
@@ -145,7 +162,12 @@ class DataBase:
             """, keyword
         )
         print(qs)
-        return qs
+        return [{
+            'date': date,
+            'mentions': mentions,
+            'total': total,
+            'party': party
+        } for (date, mentions, total, party) in qs]
 
     def close(self):
         self.con.close()
