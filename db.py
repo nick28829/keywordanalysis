@@ -13,21 +13,22 @@ Table with single keyword analysis for one party on a specific date.
 class DataBase:
     def __init__(self):
         self.con = sqlite3.connect('kwa.db')
+        self.cur = self.con.cursor()
 
     def createDB(self, parties: list, keywords: list):
-        self.con.execute("""
+        self.cur.execute("""
         CREATE TABLE IF NOT EXISTS keyword (
             id INTEGER PRIMARY KEY, 
             keyword CHARACTER(128) UNIQUE
         );
         """)
-        self.con.execute("""
+        self.cur.execute("""
         CREATE TABLE IF NOT EXISTS party (
             id INTEGER PRIMARY KEY, 
             name CHARACTER(128) UNIQUE
         );
         """)
-        self.con.execute("""
+        self.cur.execute("""
         CREATE TABLE IF NOT EXISTS analysis (
             id INTEGER PRIMARY KEY, 
             date DATE, 
@@ -41,21 +42,21 @@ class DataBase:
         """)
 
         for party in parties:
-            qs = self.con.execute("""
+            qs = self.cur.execute("""
                     SELECT (name) FROM party WHERE name = (?);
                 """, (party,))
             if qs.rowcount == 0:
-                self.con.execute("""
+                self.cur.execute("""
                     INSERT INTO party (name) VALUES 
                         (?);
                     """, (party,))
 
         for keyword in keywords:
-            qs = self.con.execute("""
+            qs = self.cur.execute("""
                     SELECT (keyword) FROM keyword WHERE keyword = (?);
                 """, (party,))
             if qs.rowcount == 0:
-                self.con.execute("""
+                self.cur.execute("""
                     INSERT INTO keyword (keyword) VALUES
                         (?);
                     """, (keyword,))
@@ -73,7 +74,7 @@ class DataBase:
                     except KeyError:
                         logging.error('Did not find total for date ' + date)
                         total = 0
-                    qs = self.con.execute(
+                    qs = self.cur.execute(
                         """
                         SELECT mentions, total 
                         FROM analysis 
@@ -92,7 +93,7 @@ class DataBase:
                         q_id, q_mentions, q_total = qs.fetchone()
                         mentions += q_mentions
                         total += q_total
-                        self.con.execute(
+                        self.cur.execute(
                             """
                             UPDATE analysis
                             SET mentions = (?), total = (?)
@@ -106,7 +107,7 @@ class DataBase:
                         )
                     # if no entry for this day exists yet
                     else:
-                        self.con.execute(
+                        self.cur.execute(
                             """
                             INSERT INTO analysis (
                                 date, 
@@ -133,7 +134,7 @@ class DataBase:
         self.con.commit()
 
     def getKeywords(self) -> list:
-        qs = self.con.execute(
+        qs = self.cur.execute(
             """
             SELECT keyword FROM keyword;
             """
@@ -149,7 +150,7 @@ class DataBase:
             logging.error('Unknown keyword used for query, possibly prevented SQL-injection. Keyword is ' + keyword)
             raise ValueError
 
-        qs = self.con.execute(
+        qs = self.cur.execute(
             """
             SELECT date, mentions, total, party
             FROM ((analysis 
