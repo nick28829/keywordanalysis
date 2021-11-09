@@ -45,7 +45,7 @@ class DataBase:
             qs = self.cur.execute("""
                     SELECT (name) FROM party WHERE name = (?);
                 """, (party,))
-            if qs.rowcount == 0:
+            if qs.rowcount < 1:
                 self.cur.execute("""
                     INSERT INTO party (name) VALUES 
                         (?);
@@ -55,7 +55,7 @@ class DataBase:
             qs = self.cur.execute("""
                     SELECT (keyword) FROM keyword WHERE keyword = (?);
                 """, (party,))
-            if qs.rowcount == 0:
+            if qs.rowcount < 1:
                 self.cur.execute("""
                     INSERT INTO keyword (keyword) VALUES
                         (?);
