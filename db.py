@@ -152,18 +152,18 @@ class DataBase:
 
         qs = self.cur.execute(
             """
-            SELECT date, mentions, total, party
+            SELECT analysis.date, analysis.mentions, analysis.total, party.name
             FROM ((analysis 
-            JOIN keyword 
-            ON analysis.keyword = keyword.id)
-            JOIN party
-            ON analysis.party = party.id)
-            WHERE keyword = (?)
-            GROUP BY party
-            ORDER BY date;
-            """, keyword
+                    JOIN keyword 
+                    ON analysis.keyword = keyword.id)
+                JOIN party
+                ON analysis.party = party.id
+            )
+            WHERE keyword.keyword = (?)
+            GROUP BY party.name
+            ORDER BY analysis.date;
+            """, (keyword,)
         )
-        print(qs)
         return [{
             'date': date,
             'mentions': mentions,
