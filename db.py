@@ -87,8 +87,25 @@ class DataBase:
                             party
                         ]
                     )
+                    # if there is already an entry for this day
+                    if qs.rowcount > 0:
+                        q_id, q_mentions, q_total = qs.fetchone()
+                        mentions += q_mentions
+                        total += q_total
+                        self.con.execute(
+                            """
+                            UPDATE analysis
+                            SET mentions = (?), total = (?)
+                            WHERE id = (?);
+                            """,
+                            [
+                                mentions,
+                                total,
+                                q_id
+                            ]
+                        )
                     # if no entry for this day exists yet
-                    if qs.rowcount == 0:
+                    else:
                         self.con.execute(
                             """
                             INSERT INTO analysis (
@@ -112,24 +129,7 @@ class DataBase:
                                 party,
                                 keyword
                             ]
-                        )
-                    # if there is already an entry for this day
-                    else:
-                        q_id, q_mentions, q_total = qs.fetchone()
-                        mentions += q_mentions
-                        total += q_total
-                        self.con.execute(
-                            """
-                            UPDATE analysis
-                            SET mentions = (?), total = (?)
-                            WHERE id = (?);
-                            """,
-                            [
-                                mentions,
-                                total,
-                                q_id
-                            ]
-                        )
+                        )          
         self.con.commit()
 
     def getKeywords(self) -> list:
