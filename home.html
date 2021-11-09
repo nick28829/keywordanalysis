@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Twitter Keyword Analysis</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+    </head>
+    <body>
+        <h1>Twitter Keyword Analysis</h1>
+        <form>
+            <select name="Keyword" id="Keyword">
+                
+            </select>
+			<canvas id="myChart" width="400" height="400"></canvas>
+
+        </form>
+
+        <script>
+		function loadGraph (event) {
+			var keyword = event.target.value;
+			fetch(
+				"/keyword/" + keyword
+			).then(
+				function (data) {return data.json();}
+			).then(
+				function (data) {
+				
+					const ctx = document.getElementById('myChart').getContext('2d');
+					const myChart = new Chart(ctx, {
+						type: 'line',
+						data: {
+							datasets: [{
+								label: '# of mentions',
+								data: data,
+								borderWidth: 1
+							}]
+						},
+						options: {
+							scales: {
+								y: {
+									beginAtZero: true
+								}
+							}
+						}
+					});
+					
+				}
+				
+			)
+		}
+		
+        // load available keywords
+		fetch(
+			"/keywords"			
+		).then(
+			function (data) {return data.json()}
+		).then(
+			function (keywords) {
+				var select = document.getElementById("Keyword");
+				for (idx in keywords) {
+					var keyword = keywords[idx]
+					var newOption = document.createElement("option")
+					newOption.value = keyword;
+					newOption.innerHTML = keyword;
+					select.appendChild(newOption);
+				}
+			}
+		)
+		document.getElementById("Keyword").addEventListener("change", loadGraph);
+			
+
+        </script>
+    </body>
+</html>
