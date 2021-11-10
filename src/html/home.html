@@ -9,7 +9,7 @@
         <h1>Twitter Keyword Analysis</h1>
         <form>
             <select name="Keyword" id="Keyword">
-                
+                <option value="" disabled selected>Select your option</option>
             </select>
 			<canvas id="myChart" width="400" height="400"></canvas>
 
@@ -24,9 +24,11 @@
 				function (data) {return data.json();}
 			).then(
 				function (data) {
-				
+					if (myChart) {
+						myChart.destroy();
+					}
 					const ctx = document.getElementById('myChart').getContext('2d');
-					const myChart = new Chart(ctx, {
+					myChart = new Chart(ctx, {
 						type: 'line',
 						data: {
 							datasets: [{
@@ -48,6 +50,31 @@
 				
 			)
 		}
+			
+			
+		
+		// placeholder for canvas
+		const ctx = document.getElementById('myChart').getContext('2d');
+		// myChart as global variable
+		let myChart = new Chart(ctx, {
+			type: 'line',
+			data: {
+				datasets: [{
+					label: '# of mentions',
+					data: [1],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			}
+		});
+			
+			
 		
         // load available keywords
 		fetch(
